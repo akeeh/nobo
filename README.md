@@ -1,3 +1,10 @@
+---
+
+This is a fork from [csabigee/nobo](https://github.com/csabigee/nobo) to enable me to include only a known version of external components on my home automation and to test my own additions if/when needed.
+I suggest to use the original source instead, this fork won't initially have much extra documentation.
+
+---
+
 Nobo Panel Heaters ESPHome integration (experimental)
 =================================
 <p align="center">
