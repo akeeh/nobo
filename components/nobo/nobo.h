@@ -21,6 +21,9 @@ class NoboClimate : public climate::Climate, public Component, public i2c::I2CDe
    void update_power();
    void update_temp();
    float get_heater_power_percentage();
+   
+   void set_frost_protection_state(bool state);
+   bool get_frost_protection_state();
 
    void set_power_sensor(sensor::Sensor *power_sensor) { power_sensor_ = power_sensor; }
    void set_nominal_power_watt(float nominal_power_watt) { nominal_power_watt_ = nominal_power_watt; }
@@ -38,6 +41,7 @@ class NoboClimate : public climate::Climate, public Component, public i2c::I2CDe
    float heater_power_percentage_;
    float heater_power_watt_;
    uint8_t update_count_;
+   bool frost_protection_mode_;
    std::chrono::steady_clock::time_point begin_time_sensors_;
    std::chrono::steady_clock::time_point begin_time_state_;
 };

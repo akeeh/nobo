@@ -21,6 +21,7 @@ void NoboClimate::setup() {
   this->heater_power_percentage_=0;
   this->heater_power_watt_=0;
   this->update_count_=0;
+  this->frost_protection_mode_=false;
 
   auto restore = this->restore_state_();
   if (restore.has_value()) {
@@ -58,7 +59,7 @@ bool NoboClimate::set_target_temperature(uint8_t temperature) {
     uint8_t tx_data[8];
     uint8_t rx_data[1];
 
-    if(temperature==MIN_TEMP) {
+    if(temperature==MIN_TEMP || this->frost_protection_mode_) {
         tx_data[0]=0x0B;
         tx_data[1]=0x00;
         tx_data[2]=0x00;
@@ -70,7 +71,6 @@ bool NoboClimate::set_target_temperature(uint8_t temperature) {
     tx_data[3]=0x00;
     tx_data[4]=MAGIC1[temperature-MIN_TEMP];
     tx_data[5]=MAGIC2[temperature-MIN_TEMP];
-
 
     i2c::ErrorCode error = this->write_register(0x01, tx_data, 6, false);
     if(error) {
@@ -88,6 +88,16 @@ bool NoboClimate::set_target_temperature(uint8_t temperature) {
       return false;
     }
     return true;
+}
+
+void NoboClimate::set_frost_protection_state(bool state) {
+	this->frost_protection_mode_ = state; 
+	this->set_target_temperature(static_cast<uint8_t>(this->target_temperature));
+}
+
+bool NoboClimate::get_frost_protection_state()
+{
+	return this->frost_protection_mode_;
 }
 
 bool NoboClimate::get_heater_state() {
@@ -119,8 +129,7 @@ float NoboClimate::get_heater_temperature() {
     return static_cast<float>(millicelsius.t16)/1000.0;
 }
 
-float NoboClimate::get_heater_power_percentage()
-{
+float NoboClimate::get_heater_power_percentage() {
   return heater_power_percentage_;
 }
 
